@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CodeChavez.ConfigurablePicoW.MainPage"
+             Title="Configurable Pico W">
+
+    <StackLayout Padding="20" Spacing="15">
+        <Button Text="Scan for Devices"
+                Command="{Binding ScanCommand}"/>
+
+        <!-- List of discovered devices -->
+        <CollectionView 
+            ItemsSource="{Binding Devices}" 
+            SelectionMode="Single"
+            SelectedItem="{Binding SelectedDevice}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="10">
+                        <Label Text="{Binding Name}" />
+                        <Label Text="{Binding Id}" FontSize="Small" TextColor="Gray"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Entry Placeholder="Wi-Fi SSID" Text="{Binding WifiSsid, Mode=TwoWay}" />
+        <Entry Placeholder="Wi-Fi Password" Text="{Binding WifiPassword, Mode=TwoWay}" />
+        <Entry Placeholder="MQTT Broker" Text="{Binding MqttBroker, Mode=TwoWay}" />
+        <Entry Placeholder="MQTT Port" Text="{Binding MqttPort, Mode=TwoWay}" Keyboard="Numeric"/>
+
+        <Button Text="Pair Selected Device" Command="{Binding PairCommand}" />
+    </StackLayout>
+</ContentPage>

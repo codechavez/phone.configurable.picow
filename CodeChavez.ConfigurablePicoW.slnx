@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/CodeChavez.ConfigurablePicoW/CodeChavez.ConfigurablePicoW.csproj" Id="1282a9ff-7d7b-4889-925b-62ce09f0653c">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>
