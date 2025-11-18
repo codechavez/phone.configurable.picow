@@ -8,10 +8,5 @@
             InitializeComponent();
             BindingContext = vm;
         }
-
-        private void OnCounterClicked(object? sender, EventArgs e)
-        {
-
-        }
     }
 }

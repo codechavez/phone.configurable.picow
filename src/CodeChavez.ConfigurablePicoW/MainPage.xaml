@@ -27,6 +27,7 @@
         <Entry Placeholder="Wi-Fi Password" Text="{Binding WifiPassword, Mode=TwoWay}" />
         <Entry Placeholder="MQTT Broker" Text="{Binding MqttBroker, Mode=TwoWay}" />
         <Entry Placeholder="MQTT Port" Text="{Binding MqttPort, Mode=TwoWay}" Keyboard="Numeric"/>
+        <Entry Placeholder="MQTT Topic" Text="{Binding MqttTopic, Mode=TwoWay}" />
 
         <Button Text="Pair Selected Device" Command="{Binding PairCommand}" />
     </StackLayout>

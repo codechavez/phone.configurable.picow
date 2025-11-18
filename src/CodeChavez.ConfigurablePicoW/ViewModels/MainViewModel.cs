@@ -68,6 +68,26 @@ public partial class MainViewModel : ObservableObject
                connect == PermissionStatus.Granted;
     }
 
+    async Task WriteJsonChunked(ICharacteristic characteristic, string json)
+    {
+        var bytes = Encoding.UTF8.GetBytes(json);
+
+        const int MTU = 20; // safe value on iOS w/o MTU negotiation
+        int offset = 0;
+
+        while (offset < bytes.Length)
+        {
+            int len = Math.Min(MTU, bytes.Length - offset);
+            var chunk = bytes.Skip(offset).Take(len).ToArray();
+
+            Debug.WriteLine($"Writing chunk: {Encoding.UTF8.GetString(chunk)}");
+            await characteristic.WriteAsync(chunk);
+
+            offset += len;
+            await Task.Delay(300); // small delay helps on iOS
+        }
+    }
+
     [RelayCommand]
     private async Task ScanAsync()
     {
@@ -118,10 +138,11 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             var json = JsonSerializer.Serialize(payload);
-            var data = Encoding.UTF8.GetBytes(json);
-
-            await rx.WriteAsync(data);
+            
+            await WriteJsonChunked(rx, json);
+            
             await Shell.Current.DisplayAlertAsync("Success", "Credentials sent.", "OK");
+            await Task.Delay(10000);
             return;
         }
         catch (Exception ex)

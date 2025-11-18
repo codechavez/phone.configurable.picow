@@ -2,6 +2,8 @@
 using Plugin.BLE.Abstractions.Contracts;
 using System.Text;
 using System.Text.Json;
+using Plugin.BLE.Abstractions.Contracts;
+using System.Diagnostics;
 
 namespace CodeChavez.ConfigurablePicoW;
 
@@ -40,6 +42,27 @@ public class BlePairingService
         DeviceDiscovered?.Invoke(e.Device);
     }
 
+    async Task WriteJsonChunked(ICharacteristic characteristic, string json)
+    {
+        var bytes = Encoding.UTF8.GetBytes(json);
+
+        const int MTU = 20; // safe value on iOS w/o MTU negotiation
+        int offset = 0;
+
+        while (offset < bytes.Length)
+        {
+            int len = Math.Min(MTU, bytes.Length - offset);
+            var chunk = bytes.Skip(offset).Take(len).ToArray();
+
+            Debug.WriteLine($"Writing chunk: {Encoding.UTF8.GetString(chunk)}");
+            await characteristic.WriteAsync(chunk);
+
+            offset += len;
+            await Task.Delay(100); // small delay helps on iOS
+        }
+    }
+
+
     public async Task<bool> SendCredentialsAsync(IDevice device, PairingPayload payload, CancellationToken cancellationToken = default)
     {
         if (device == null) return false;
@@ -60,7 +83,8 @@ public class BlePairingService
             string json = JsonSerializer.Serialize(payload);
             byte[] data = Encoding.UTF8.GetBytes(json);
 
-            await rx.WriteAsync(data);
+            await WriteJsonChunked(rx, json);
+
             return true;
         }
         catch
