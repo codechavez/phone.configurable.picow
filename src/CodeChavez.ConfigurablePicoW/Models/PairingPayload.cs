@@ -9,5 +9,8 @@ public record PairingPayload(
     string wifi_password,
     string mqtt_broker,
     int mqtt_port,
-    string mqtt_topic
+    string mqtt_topic,
+    string building_id,
+    string floorplan_id,
+    string space_id
 );

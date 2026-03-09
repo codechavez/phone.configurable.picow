@@ -32,6 +32,15 @@ public partial class MainViewModel : ObservableObject
     private string mqttTopic = "devices/ble/detections";
 
     [ObservableProperty]
+    private string buildingId = string.Empty;
+
+    [ObservableProperty]
+    private string floorplanId = string.Empty;
+
+    [ObservableProperty]
+    private string spaceId = string.Empty;
+
+    [ObservableProperty]
     private IDevice? selectedDevice;
 
     [ObservableProperty]
@@ -124,7 +133,7 @@ public partial class MainViewModel : ObservableObject
         {
             if (SelectedDevice == null) return;
 
-            var payload = new PairingPayload(wifiSsid, wifiPassword, mqttBroker, mqttPort, mqttTopic);
+            var payload = new PairingPayload(wifiSsid, wifiPassword, mqttBroker, mqttPort, mqttTopic, buildingId, floorplanId, spaceId);
 
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(180));
             await _adapter.ConnectToDeviceAsync(SelectedDevice, cancellationToken: cts.Token);
@@ -142,7 +151,7 @@ public partial class MainViewModel : ObservableObject
             await WriteJsonChunked(rx, json);
             
             await Shell.Current.DisplayAlertAsync("Success", "Credentials sent.", "OK");
-            await Task.Delay(10000);
+            await Task.Delay(20000);
             return;
         }
         catch (Exception ex)
